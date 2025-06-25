@@ -125,10 +125,9 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-300 via-red-300 to-pink-400 pt-16 sm:pt-20 md:pt-24 p-3 sm:p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-orange-300 via-red-300 to-pink-400 pt-6 p-3 sm:p-4 md:p-6">
       <Navbar />
-
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto sm:mt-44 md:mt-12 lg:mt-16 p-4 sm:p-6 md:p-8 ">
         {loading ? (
           <p className="text-black font-bold text-2xl">Loading posts...</p>
         ) : posts.length === 0 ? (

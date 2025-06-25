@@ -162,7 +162,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-300 via-red-300 to-pink-400 pt-16 sm:pt-20 md:pt-24 p-3 sm:p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-orange-300 via-red-300 to-pink-400 pt-6 p-3 sm:p-4 md:p-6">
       <Navbar />
 
       <div className="max-w-6xl mx-auto">
@@ -217,7 +217,6 @@ const Profile = () => {
                   <div className="col-span-full bg-white backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-6 sm:p-8 text-center">
                     <div className="text-6xl text-black mb-4">📝</div>
                     <p className="text-black text-lg">No posts yet.</p>
-                    
                   </div>
                 ) : (
                   userPosts.map((post) => (
