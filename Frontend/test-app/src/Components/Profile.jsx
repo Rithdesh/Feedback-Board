@@ -9,7 +9,14 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [editModal, setEditModal] = useState({ open: false, post: null });
   const [editCaption, setEditCaption] = useState("");
-  const [deleteModal, setDeleteModal] = useState({ open: false, postId: null });
+  const [editImageFile, setEditImageFile] = useState(null);
+  const [editImageUrl, setEditImageUrl] = useState("");
+  const [feedbackEditModal, setFeedbackEditModal] = useState({
+    open: false,
+    feedback: null,
+  });
+  const [editFeedbackText, setEditFeedbackText] = useState("");
+  const [editFeedbackAnonymous, setEditFeedbackAnonymous] = useState(false);
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const token = localStorage.getItem("token");
@@ -39,12 +46,9 @@ const Profile = () => {
   const fetchUserFeedbacks = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(
-        "http://localhost:8000/Feedback/mine",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await axios.get("http://localhost:8000/Feedback/mine", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setUserFeedbacks(res.data);
     } catch (err) {
       console.error("Error fetching user feedbacks:", err);
@@ -56,52 +60,100 @@ const Profile = () => {
   const openEditModal = (post) => {
     setEditModal({ open: true, post });
     setEditCaption(post.caption);
+    setEditImageUrl("");
+    setEditImageFile(null);
   };
 
   const closeEditModal = () => {
     setEditModal({ open: false, post: null });
     setEditCaption("");
+    setEditImageFile(null);
+    setEditImageUrl("");
   };
 
   const handleEditPost = async () => {
+    const formData = new FormData();
+    formData.append("caption", editCaption);
+    if (editImageFile) formData.append("image", editImageFile);
+    else if (editImageUrl.trim() !== "")
+      formData.append("imageLink", editImageUrl);
+
     try {
       await axios.put(
-        `http://localhost:8000/Post/edit/${editModal.post._id}`,
-        { caption: editCaption },
-        { headers: { Authorization: `Bearer ${token}` } }
+        `http://localhost:8000/Post/update/${editModal.post._id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
       closeEditModal();
       fetchUserPosts();
     } catch (err) {
-      console.error("Error editing post:", err);
+      console.error("Error updating post:", err);
     }
   };
 
-  const openDeleteModal = (postId) => {
-    setDeleteModal({ open: true, postId });
-  };
-
-  const closeDeleteModal = () => {
-    setDeleteModal({ open: false, postId: null });
-  };
-
-  const handleDeletePost = async () => {
+  const handleDeletePost = async (postId) => {
     try {
-      await axios.delete(
-        `http://localhost:8000/Post/delete/${deleteModal.postId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      closeDeleteModal();
+      await axios.delete(`http://localhost:8000/Post/delete/${postId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       fetchUserPosts();
     } catch (err) {
       console.error("Error deleting post:", err);
     }
   };
 
+  const handleDeleteFeedback = async (feedbackId) => {
+    try {
+      await axios.delete(
+        `http://localhost:8000/Feedback/delete/${feedbackId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      fetchUserFeedbacks();
+    } catch (err) {
+      console.error("Error deleting feedback:", err);
+    }
+  };
+
+  const openFeedbackEditModal = (feedback) => {
+    setFeedbackEditModal({ open: true, feedback });
+    setEditFeedbackText(feedback.text);
+    setEditFeedbackAnonymous(feedback.anonymous);
+  };
+
+  const closeFeedbackEditModal = () => {
+    setFeedbackEditModal({ open: false, feedback: null });
+    setEditFeedbackText("");
+    setEditFeedbackAnonymous(false);
+  };
+
+  const handleEditFeedback = async () => {
+    try {
+      await axios.put(
+        `http://localhost:8000/Feedback/update/${feedbackEditModal.feedback._id}`,
+        {
+          text: editFeedbackText,
+          anonymous: editFeedbackAnonymous,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      closeFeedbackEditModal();
+      fetchUserFeedbacks();
+    } catch (err) {
+      console.error("Error updating feedback:", err);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 pt-24 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-orange-400 via-red-400 to-pink-500 pt-24 p-6">
       <Navbar />
 
       <div className="max-w-6xl mx-auto">
@@ -113,7 +165,7 @@ const Profile = () => {
           <p className="text-gray-600">{user.email}</p>
         </div>
 
-        {/* Tab Navigation */}
+        {/* Tabs */}
         <div className="bg-white rounded-lg shadow mb-6">
           <div className="flex">
             <button
@@ -139,13 +191,13 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* Content */}
         {loading ? (
           <div className="text-center py-8">
             <p className="text-gray-600">Loading...</p>
           </div>
         ) : (
           <>
+            {/* Posts */}
             {activeTab === "posts" && (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {userPosts.length === 0 ? (
@@ -167,9 +219,8 @@ const Profile = () => {
                         {post.caption}
                       </p>
                       <div className="text-sm text-gray-600 mb-4">
-                        <span>{post.feedbackCount || 0} feedbacks</span>
-                        <span className="mx-2">•</span>
-                        <span>
+                        <span className="font-bold">
+                          Created on:{" "}
                           {new Date(post.createdAt).toLocaleDateString()}
                         </span>
                       </div>
@@ -181,7 +232,7 @@ const Profile = () => {
                           Edit
                         </button>
                         <button
-                          onClick={() => openDeleteModal(post._id)}
+                          onClick={() => handleDeletePost(post._id)}
                           className="flex-1 py-2 bg-red-600 text-white rounded hover:bg-red-700"
                         >
                           Delete
@@ -193,45 +244,59 @@ const Profile = () => {
               </div>
             )}
 
+            {/* Feedbacks */}
             {activeTab === "feedbacks" && (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {userFeedbacks.length === 0 ? (
-                  <div className="bg-white rounded-lg shadow p-8 text-center">
+                  <div className="bg-white rounded-lg shadow p-6 text-center">
                     <p className="text-gray-500">No feedbacks yet.</p>
                   </div>
                 ) : (
                   userFeedbacks.map((feedback) => (
                     <div
                       key={feedback._id}
-                      className="bg-white rounded-lg shadow p-4"
+                      className="bg-white rounded-lg shadow p-3 flex gap-3 items-start"
                     >
-                      <div className="flex gap-4">
-                        <img
-                          src={feedback.post?.image}
-                          alt="Post"
-                          className="w-16 h-16 object-cover rounded"
-                        />
-                        <div className="flex-1">
-                          <h3 className="font-medium text-gray-800 mb-1">
-                            "{feedback.post?.caption || "Deleted Post"}"
-                          </h3>
-                          <p className="text-sm text-gray-600 mb-2">
-                            By: {feedback.post?.user?.name || "Unknown"}
+                      <img
+                        src={feedback.post?.image}
+                        alt="Post"
+                        className="w-16 h-16 object-cover rounded"
+                      />
+
+                      <div className="flex-1 overflow-hidden">
+                        <h4 className="text-sm font-semibold text-gray-700 truncate mb-1">
+                          On: "{feedback.post?.caption || "Deleted Post"}"
+                        </h4>
+
+                        <div className="bg-blue-50 rounded p-2 border-l-4 border-blue-400">
+                          <p className="text-sm text-gray-700 mb-1 line-clamp-3">
+                            {feedback.text}
                           </p>
-                          <div className="bg-gray-50 rounded p-3 mb-2">
-                            <p className="text-gray-800">"{feedback.text}"</p>
-                          </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="flex justify-between items-center text-xs text-gray-500">
                             <span>
-                              {feedback.anonymous ? "Anonymous" : "Public"}
+                              {feedback.anonymous ? "Anonymous" : user.name}
                             </span>
-                            <span className="mx-2">•</span>
                             <span>
                               {new Date(
                                 feedback.createdAt
                               ).toLocaleDateString()}
                             </span>
                           </div>
+                        </div>
+
+                        <div className="flex justify-end gap-2 mt-2">
+                          <button
+                            onClick={() => openFeedbackEditModal(feedback)}
+                            className="py-1 px-3 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteFeedback(feedback._id)}
+                            className="py-1 px-3 bg-red-500 text-white text-xs rounded hover:bg-red-600"
+                          >
+                            Delete
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -243,7 +308,7 @@ const Profile = () => {
         )}
       </div>
 
-      {/* Edit Modal */}
+      {/* Edit Post Modal */}
       {editModal.open && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
@@ -252,8 +317,21 @@ const Profile = () => {
               value={editCaption}
               onChange={(e) => setEditCaption(e.target.value)}
               rows={3}
-              className="w-full p-3 border border-gray-300 rounded mb-4"
+              className="w-full p-3 border border-gray-300 rounded mb-3"
               placeholder="Edit caption..."
+            />
+            <input
+              type="text"
+              value={editImageUrl}
+              onChange={(e) => setEditImageUrl(e.target.value)}
+              placeholder="Paste new image URL (Optional)"
+              className="w-full p-3 border border-gray-300 rounded mb-3"
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setEditImageFile(e.target.files[0])}
+              className="w-full mb-3"
             />
             <div className="flex gap-3">
               <button
@@ -273,26 +351,30 @@ const Profile = () => {
         </div>
       )}
 
-      {/* Delete Modal */}
-      {deleteModal.open && (
+      {/* Edit Feedback Modal */}
+      {feedbackEditModal.open && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-            <h2 className="text-lg font-bold mb-4">Delete Post</h2>
-            <p className="text-gray-700 mb-6">
-              Are you sure? This cannot be undone.
-            </p>
+            <h2 className="text-lg font-bold mb-4">Edit Feedback</h2>
+            <textarea
+              value={editFeedbackText}
+              onChange={(e) => setEditFeedbackText(e.target.value)}
+              rows={3}
+              className="w-full p-3 border border-gray-300 rounded mb-3"
+              placeholder="Edit feedback text..."
+            />
             <div className="flex gap-3">
               <button
-                onClick={closeDeleteModal}
+                onClick={closeFeedbackEditModal}
                 className="flex-1 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
               >
                 Cancel
               </button>
               <button
-                onClick={handleDeletePost}
-                className="flex-1 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                onClick={handleEditFeedback}
+                className="flex-1 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
               >
-                Delete
+                Update
               </button>
             </div>
           </div>

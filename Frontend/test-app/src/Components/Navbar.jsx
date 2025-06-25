@@ -11,25 +11,28 @@ const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    window.location.href = "/login";
+    window.location.href = "/";
   };
 
   return (
     <nav
       className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-6xl 
-      bg-white/90 backdrop-blur-md shadow-lg rounded-2xl px-6 py-3 
-      flex items-center justify-between border border-gray-200"
+      bg-orange-50 backdrop-blur-md shadow-lg rounded-2xl px-6 py-3 
+      flex items-center justify-between border-2 border-orange-400 text-orange-400"
     >
       <div>
-        <h1
-          onClick={() => (window.location.href = "/")}
-          className="text-xl font-bold text-blue-700 cursor-pointer"
-        >
+        <h1 className="text-xl font-bold text- cursor-pointer">
           Feedback Board
         </h1>
       </div>
 
       <div className="flex items-center space-x-4">
+        <button
+          onClick={() => (window.location.href = "/")}
+          className="px-4 py-2 text-sm text-white font-bold rounded-lg bg-amber-600 hover:bg-amber-700  transition hover:-translate-y-1"
+        >
+          Home
+        </button>
         {!isLoggedIn ? (
           <button
             onClick={() => (window.location.href = "/login")}
@@ -41,13 +44,13 @@ const Navbar = () => {
           <>
             <button
               onClick={() => (window.location.href = "/profile")}
-              className="px-4 py-2 bg-gradient-to-r from-violet-800 to via-violet-700 text-white text-sm rounded-lg hover:bg-indigo-700 transition hover:-translate-y-1"
+              className="px-4 py-2  text-white font-bold text-sm rounded-lg bg-amber-600 hover:bg-amber-700 transition hover:-translate-y-1"
             >
               Profile
             </button>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600 transition hover:-translate-y-1"
+              className="px-4 py-2 bg-red-500 text-white font-bold text-sm rounded-lg hover:bg-red-600 transition hover:-translate-y-1"
             >
               Logout
             </button>

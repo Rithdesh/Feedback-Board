@@ -12,12 +12,11 @@ const Home = () => {
   const [feedbackText, setFeedbackText] = useState("");
   const [anonymous, setAnonymous] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
-  const [expandedPostId, setExpandedPostId] = useState(null);
   const [postFeedbacks, setPostFeedbacks] = useState({});
-  const [loadingFeedback, setLoadingFeedback] = useState(false);
+  const [loadingFeedback, setLoadingFeedback] = useState({});
   const [createPostModal, setCreatePostModal] = useState(false);
   const [newPostCaption, setNewPostCaption] = useState("");
-  const [newPostImage, setNewPostImage] = useState("");
+  const [newPostImageUrl, setNewPostImageUrl] = useState("");
   const [imageFile, setImageFile] = useState(null);
 
   const isLoggedIn = !!localStorage.getItem("token");
@@ -30,6 +29,10 @@ const Home = () => {
     try {
       const res = await axios.get("http://localhost:8000/Post/allposts");
       setPosts(res.data);
+      // Fetch feedback for all posts
+      res.data.forEach((post) => {
+        fetchPostFeedbacks(post._id);
+      });
     } catch (err) {
       console.error("Error fetching posts:", err);
     } finally {
@@ -56,10 +59,7 @@ const Home = () => {
     try {
       await axios.post(
         `http://localhost:8000/Feedback/create/${feedbackModal.postId}`,
-        {
-          text: feedbackText,
-          anonymous,
-        },
+        { text: feedbackText, anonymous },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -74,7 +74,7 @@ const Home = () => {
   };
 
   const fetchPostFeedbacks = async (postId) => {
-    setLoadingFeedback(true);
+    setLoadingFeedback((prev) => ({ ...prev, [postId]: true }));
     try {
       const res = await axios.get(
         `http://localhost:8000/Feedback/getpostfeedback/${postId}`
@@ -83,18 +83,7 @@ const Home = () => {
     } catch (err) {
       console.error("Error fetching feedbacks:", err);
     } finally {
-      setLoadingFeedback(false);
-    }
-  };
-
-  const toggleShowFeedback = (postId) => {
-    if (expandedPostId === postId) {
-      setExpandedPostId(null);
-    } else {
-      setExpandedPostId(postId);
-      if (!postFeedbacks[postId]) {
-        fetchPostFeedbacks(postId);
-      }
+      setLoadingFeedback((prev) => ({ ...prev, [postId]: false }));
     }
   };
 
@@ -105,10 +94,11 @@ const Home = () => {
   const handleCreatePost = async () => {
     const formData = new FormData();
     formData.append("caption", newPostCaption);
+
     if (imageFile) {
       formData.append("image", imageFile);
-    } else {
-      formData.append("imageLink", newPostImage);
+    } else if (newPostImageUrl.trim() !== "") {
+      formData.append("imageUrl", newPostImageUrl);
     }
 
     try {
@@ -120,7 +110,7 @@ const Home = () => {
       });
       setCreatePostModal(false);
       setNewPostCaption("");
-      setNewPostImage("");
+      setNewPostImageUrl("");
       setImageFile(null);
       fetchPosts();
     } catch (err) {
@@ -129,87 +119,86 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-6 pt-24">
+    <div className="min-h-screen bg-gradient-to-br from-orange-400 via-red-400 to-pink-00 p-6 pt-24">
       <Navbar />
-
-      {isLoggedIn && (
-        <div className="mb-6 flex justify-center">
-          <button
-            onClick={() => setCreatePostModal(true)}
-            className="px-6 py-3 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition"
-          >
-            + Create Post
-          </button>
-        </div>
-      )}
 
       {loading ? (
         <p className="text-center text-gray-600">Loading posts...</p>
       ) : posts.length === 0 ? (
         <p className="text-center text-gray-500">No posts available.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ">
           {posts.map((post) => (
             <div
               key={post._id}
-              className={`bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-4 flex flex-col justify-between transition-all duration-300 ${
-                expandedPostId === post._id
-                  ? "scale-[1.03] ring-2 ring-indigo-200"
-                  : "scale-100"
-              }`}
+              className="bg-slate-200 backdrop-blur-sm rounded-xl shadow-lg p-4 flex flex-col h-[550px]"
             >
               <img
                 src={post.image}
                 alt="Post"
                 className="w-full h-48 object-cover rounded-md mb-3"
               />
+
               <p className="text-lg font-semibold text-gray-800 mb-2">
                 {post.caption}
               </p>
-              <div className="flex items-center justify-between text-sm text-gray-600">
+
+              <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
                 <span>By: {post.user?.name || "Anonymous"}</span>
                 <span>{new Date(post.createdAt).toLocaleDateString()}</span>
               </div>
-              <div className="mt-4 flex justify-between items-center">
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => openModal(post._id)}
-                    className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
-                  >
-                    Add Feedback
-                  </button>
-                  <button
-                    onClick={() => toggleShowFeedback(post._id)}
-                    className="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
-                  >
-                    {expandedPostId === post._id
-                      ? "Hide Feedback"
-                      : "Show Feedback"}
-                  </button>
-                </div>
-              </div>
 
-              {expandedPostId === post._id && (
-                <div className="mt-4 bg-gray-100 p-3 rounded-lg">
-                  {loadingFeedback ? (
+              <button
+                onClick={() => openModal(post._id)}
+                className="w-full px-3 py-2 rounded-lg bg-orange-600 hover:bg-orange-700 text-white mb-3"
+              >
+                Add Feedback
+              </button>
+
+              {/* Feedback Section */}
+              <div className="flex-1 overflow-hidden">
+                <h4 className="text-sm font-medium text-gray-700 mb-2">
+                  Feedback ({postFeedbacks[post._id]?.length || 0})
+                </h4>
+
+                <div className="h-full overflow-y-auto pb-2">
+                  {loadingFeedback[post._id] ? (
                     <p className="text-sm text-gray-500">Loading feedback...</p>
                   ) : postFeedbacks[post._id] &&
                     postFeedbacks[post._id].length > 0 ? (
-                    postFeedbacks[post._id].map((fb, idx) => (
-                      <div key={idx} className="mb-2 p-2 bg-gray-200 rounded">
-                        <p className="text-sm text-gray-700">{fb.text}</p>
-                        <p className="text-xs text-gray-500">
-                          - {fb.name || "Anonymous"}
-                        </p>
-                      </div>
-                    ))
+                    <div className="space-y-2 pb-1">
+                      {postFeedbacks[post._id].map((fb, idx) => (
+                        <div
+                          key={idx}
+                          className="bg-gray-50 p-2 rounded border-l-4 border-blue-400"
+                        >
+                          <p className="text-sm text-gray-700 mb-1">
+                            {fb.text}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            - {fb.name || "Anonymous"}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
                   ) : (
                     <p className="text-sm text-gray-500">No feedback yet.</p>
                   )}
                 </div>
-              )}
+              </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {isLoggedIn && (
+        <div className="mt-10 flex justify-center">
+          <button
+            onClick={() => setCreatePostModal(true)}
+            className="px-6 py-3 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition"
+          >
+            + Create Post
+          </button>
         </div>
       )}
 
@@ -270,8 +259,8 @@ const Home = () => {
             />
             <input
               type="text"
-              value={newPostImage}
-              onChange={(e) => setNewPostImage(e.target.value)}
+              value={newPostImageUrl}
+              onChange={(e) => setNewPostImageUrl(e.target.value)}
               placeholder="Paste image URL (Optional)"
               className="w-full p-3 border border-gray-300 rounded-lg mb-3"
             />

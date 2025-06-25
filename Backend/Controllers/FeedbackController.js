@@ -64,10 +64,60 @@ const getMyFeedbacks = async (req, res) => {
       res.status(500).json({ message: "Failed to fetch your feedbacks", error: error.message });
     }
   };
+
+  const updateFeedback = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { text, anonymous } = req.body;
+  
+      const feedback = await Feedback.findById(id);
+      if (!feedback) {
+        return res.status(404).json({ message: "Feedback not found" });
+      }
+  
+    
+      if (feedback.user.toString() !== req.user.id) {
+        return res.status(403).json({ message: "Unauthorized to edit this feedback" });
+      }
+  
+      
+      if (text) feedback.text = text;
+      if (anonymous !== undefined) feedback.anonymous = anonymous;
+  
+      await feedback.save();
+  
+      res.status(200).json({ message: "Feedback updated successfully", feedback });
+    } catch (error) {
+      res.status(500).json({ message: "Error updating feedback", error: error.message });
+    }
+  };
+
+  const deleteFeedback = async (req, res) => {
+    try {
+      const { id } = req.params;
+  
+      const feedback = await Feedback.findById(id);
+      if (!feedback) {
+        return res.status(404).json({ message: "Feedback not found" });
+      }
+  
+      if (!feedback.user || feedback.user.toString() !== req.user.id) {
+        return res.status(403).json({ message: "Unauthorized to delete this feedback" });
+      }
+  
+      await feedback.deleteOne();
+      res.status(200).json({ message: "Feedback deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting feedback:", error.message);
+      res.status(500).json({ message: "Error deleting feedback", error: error.message });
+    }
+  };
   
 
 module.exports = {
   addFeedback,
   getFeedbacksForPost,
-  getMyFeedbacks
+  getMyFeedbacks,
+  updateFeedback,
+  deleteFeedback
 };
