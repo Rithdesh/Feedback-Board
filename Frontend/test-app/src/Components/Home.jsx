@@ -27,7 +27,9 @@ const Home = () => {
 
   const fetchPosts = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/Post/allposts");
+      const res = await axios.get(
+        "https://feedback-board-n9zh.onrender.com/Post/allposts"
+      );
       setPosts(res.data);
       // Fetch feedback for all posts
       res.data.forEach((post) => {
@@ -58,7 +60,7 @@ const Home = () => {
     }
     try {
       await axios.post(
-        `http://localhost:8000/Feedback/create/${feedbackModal.postId}`,
+        `https://feedback-board-n9zh.onrender.com/Feedback/create/${feedbackModal.postId}`,
         { text: feedbackText, anonymous },
         {
           headers: {
@@ -77,7 +79,7 @@ const Home = () => {
     setLoadingFeedback((prev) => ({ ...prev, [postId]: true }));
     try {
       const res = await axios.get(
-        `http://localhost:8000/Feedback/getpostfeedback/${postId}`
+        `https://feedback-board-n9zh.onrender.com/Feedback/getpostfeedback/${postId}`
       );
       setPostFeedbacks((prev) => ({ ...prev, [postId]: res.data }));
     } catch (err) {
@@ -102,12 +104,16 @@ const Home = () => {
     }
 
     try {
-      await axios.post("http://localhost:8000/Post/create", formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await axios.post(
+        "https://feedback-board-n9zh.onrender.com/Post/create",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       setCreatePostModal(false);
       setNewPostCaption("");
       setNewPostImageUrl("");

@@ -17,7 +17,7 @@ const Login = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:8000/User/login",
+        "https://feedback-board-n9zh.onrender.com/User/login",
         formData
       );
       localStorage.setItem("token", res.data.token);
