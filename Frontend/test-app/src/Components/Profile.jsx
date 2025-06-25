@@ -66,7 +66,7 @@ const Profile = () => {
   const openEditModal = (post) => {
     setEditModal({ open: true, post });
     setEditCaption(post.caption);
-    setEditImageUrl("");
+    setEditImageUrl(post.image);
     setEditImageFile(null);
   };
 
@@ -162,7 +162,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-400 via-red-400 to-pink-500 pt-16 sm:pt-20 md:pt-24 p-3 sm:p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-orange-300 via-red-300 to-pink-400 pt-16 sm:pt-20 md:pt-24 p-3 sm:p-4 md:p-6">
       <Navbar />
 
       <div className="max-w-6xl mx-auto">
@@ -204,7 +204,9 @@ const Profile = () => {
 
         {loading ? (
           <div className="text-center py-8">
-            <p className="text-gray-600">Loading...</p>
+            <div className="bg-white backdrop-blur-md border border-white rounded-2xl shadow-2xl p-8 flex items-center justify-center flex-col">
+              <p className="text-black font-bold text-2xl">Loading...</p>
+            </div>
           </div>
         ) : (
           <>
@@ -212,41 +214,45 @@ const Profile = () => {
             {activeTab === "posts" && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
                 {userPosts.length === 0 ? (
-                  <div className="col-span-full bg-white rounded-lg shadow p-6 sm:p-8 text-center">
-                    <p className="text-gray-500">No posts yet.</p>
+                  <div className="col-span-full bg-white backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-6 sm:p-8 text-center">
+                    <div className="text-6xl text-black mb-4">📝</div>
+                    <p className="text-black text-lg">No posts yet.</p>
+                    
                   </div>
                 ) : (
                   userPosts.map((post) => (
                     <div
                       key={post._id}
-                      className="bg-white rounded-lg shadow p-3 sm:p-4"
+                      className="bg-white backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-3 sm:p-4 hover:scale-105 transition-all duration-300 group"
                     >
-                      <img
-                        src={post.image}
-                        alt="Post"
-                        className="w-full h-40 sm:h-48 object-cover rounded mb-3"
-                      />
-                      <p className="font-medium text-gray-800 mb-2 text-sm sm:text-base break-words">
+                      <div className="relative overflow-hidden rounded-xl mb-3">
+                        <img
+                          src={post.image}
+                          alt="Post"
+                          className="w-full h-40 sm:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                      <p className="font-medium text-black mb-2 text-sm sm:text-base break-words">
                         {post.caption}
                       </p>
-                      <div className="text-xs sm:text-sm text-gray-600 mb-4">
-                        <span className="font-bold">
-                          Created on:{" "}
+                      <div className="text-xs sm:text-sm text-black mb-4 flex items-center gap-1">
+                        <span className="text-blue-400">🗓️</span>
+                        <span className="font-medium">
                           {new Date(post.createdAt).toLocaleDateString()}
                         </span>
                       </div>
                       <div className="flex flex-col sm:flex-row gap-2">
                         <button
                           onClick={() => openEditModal(post)}
-                          className="flex-1 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                          className="flex-1 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm rounded-lg hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
                         >
-                          Edit
+                          ✏️ Edit
                         </button>
                         <button
                           onClick={() => handleDeletePost(post._id)}
-                          className="flex-1 py-2 bg-red-600 text-white text-sm rounded hover:bg-red-700"
+                          className="flex-1 py-2 bg-gradient-to-r from-red-500 to-pink-600 text-white text-sm rounded-lg hover:from-red-600 hover:to-pink-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
                         >
-                          Delete
+                          🗑️ Delete
                         </button>
                       </div>
                     </div>
@@ -257,38 +263,47 @@ const Profile = () => {
 
             {/* Feedbacks */}
             {activeTab === "feedbacks" && (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {userFeedbacks.length === 0 ? (
-                  <div className="bg-white rounded-lg shadow p-4 sm:p-6 text-center">
-                    <p className="text-gray-500">No feedbacks yet.</p>
+                  <div className="bg-white backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-4 sm:p-6 text-center">
+                    <div className="text-6xl text-gray-400 mb-4">💬</div>
+                    <p className="text-gray-200 text-lg">No feedbacks yet.</p>
+                    <p className="text-gray-300 text-sm mt-2">
+                      Share your thoughts on posts to see them here!
+                    </p>
                   </div>
                 ) : (
                   userFeedbacks.map((feedback) => (
                     <div
                       key={feedback._id}
-                      className="bg-white rounded-lg shadow p-3 sm:p-4"
+                      className="bg-slate-100  border border-white/20 rounded-2xl shadow-2xl p-3 sm:p-4 hover:scale-105 transition-all duration-500"
                     >
                       <div className="flex flex-col sm:flex-row gap-3 items-start">
-                        <img
-                          src={feedback.post?.image}
-                          alt="Post"
-                          className="w-full sm:w-16 h-40 sm:h-16 object-cover rounded flex-shrink-0"
-                        />
+                        <div className="relative overflow-hidden rounded-xl flex-shrink-0">
+                          <img
+                            src={feedback.post?.image}
+                            alt="Post"
+                            className="w-full sm:w-16 h-40 sm:h-16 object-cover"
+                          />
+                        </div>
 
                         <div className="flex-1 overflow-hidden w-full sm:w-auto">
-                          <h4 className="text-sm font-semibold text-gray-700 mb-1 break-words">
-                            On: "{feedback.post?.caption || "Deleted Post"}"
+                          <h4 className="text-sm font-semibold text-black mb-2 break-words flex items-center gap-2">
+                            <span className="text-blue-400">📌</span>
+                            On: {feedback.post?.caption || "Deleted Post"}
                           </h4>
 
-                          <div className="bg-blue-50 rounded p-2 border-l-4 border-blue-400">
-                            <p className="text-sm text-gray-700 mb-1 break-words">
+                          <div className="bg-gradient-to-r from-blue-500/10 to-purple-600/10 backdrop-blur-sm border border-blue-400/30 rounded-xl p-3 border-l-4 border-l-blue-400">
+                            <p className="text-sm text-black mb-2 break-words leading-relaxed">
                               {feedback.text}
                             </p>
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 text-xs text-gray-500">
-                              <span>
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 text-xs text-black">
+                              <span className="flex items-center gap-1">
+                                <span className="text-black">👤 - </span>
                                 {feedback.anonymous ? "Anonymous" : user.name}
                               </span>
-                              <span>
+                              <span className="flex items-center gap-1">
+                                <span className="text-yellow-400">📅</span>
                                 {new Date(
                                   feedback.createdAt
                                 ).toLocaleDateString()}
@@ -296,18 +311,18 @@ const Profile = () => {
                             </div>
                           </div>
 
-                          <div className="flex justify-end gap-2 mt-2">
+                          <div className="flex justify-end gap-2 mt-3">
                             <button
                               onClick={() => openFeedbackEditModal(feedback)}
-                              className="py-1 px-3 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
+                              className="py-1 px-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs rounded-lg hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-md"
                             >
-                              Edit
+                              ✏️ Edit
                             </button>
                             <button
                               onClick={() => handleDeleteFeedback(feedback._id)}
-                              className="py-1 px-3 bg-red-500 text-white text-xs rounded hover:bg-red-600"
+                              className="py-1 px-3 bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs rounded-lg hover:from-red-600 hover:to-pink-700 transform hover:scale-105 transition-all duration-200 shadow-md"
                             >
-                              Delete
+                              🗑️ Delete
                             </button>
                           </div>
                         </div>
@@ -323,14 +338,17 @@ const Profile = () => {
 
       {/* Edit Post Modal */}
       {editModal.open && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-md mx-4 p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-lg font-bold mb-4">Edit Post</h2>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white/95 backdrop-blur-md border border-white/30 rounded-2xl shadow-2xl w-full max-w-md mx-4 p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
+            <h2 className="text-lg font-bold mb-4 text-gray-800 flex items-center gap-2">
+              <span className="text-blue-500">✏️</span>
+              Edit Post
+            </h2>
             <textarea
               value={editCaption}
               onChange={(e) => setEditCaption(e.target.value)}
               rows={3}
-              className="w-full p-3 border border-gray-300 rounded mb-3 text-sm sm:text-base"
+              className="w-full p-3 border border-gray-300 rounded-xl mb-3 text-sm sm:text-base focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
               placeholder="Edit caption..."
             />
             <input
@@ -338,24 +356,26 @@ const Profile = () => {
               value={editImageUrl}
               onChange={(e) => setEditImageUrl(e.target.value)}
               placeholder="Paste new image URL (Optional)"
-              className="w-full p-3 border border-gray-300 rounded mb-3 text-sm sm:text-base"
+              className="w-full p-3 border border-gray-300 rounded-xl mb-3 text-sm sm:text-base focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setEditImageFile(e.target.files[0])}
-              className="w-full mb-3 text-sm"
-            />
+            <div className="relative mb-3">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setEditImageFile(e.target.files[0])}
+                className="w-full p-3 border border-gray-300 rounded-xl text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              />
+            </div>
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={closeEditModal}
-                className="flex-1 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm sm:text-base"
+                className="flex-1 py-2 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300 text-sm sm:text-base transition-all duration-200 transform hover:scale-105"
               >
                 Cancel
               </button>
               <button
                 onClick={handleEditPost}
-                className="flex-1 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm sm:text-base"
+                className="flex-1 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:from-blue-600 hover:to-purple-700 text-sm sm:text-base transition-all duration-200 transform hover:scale-105 shadow-lg"
               >
                 Update
               </button>
@@ -366,26 +386,29 @@ const Profile = () => {
 
       {/* Edit Feedback Modal */}
       {feedbackEditModal.open && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-md mx-4 p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-lg font-bold mb-4">Edit Feedback</h2>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white/95 backdrop-blur-md border border-white/30 rounded-2xl shadow-2xl w-full max-w-md mx-4 p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
+            <h2 className="text-lg font-bold mb-4 text-gray-800 flex items-center gap-2">
+              <span className="text-purple-500">💬</span>
+              Edit Feedback
+            </h2>
             <textarea
               value={editFeedbackText}
               onChange={(e) => setEditFeedbackText(e.target.value)}
               rows={3}
-              className="w-full p-3 border border-gray-300 rounded mb-3 text-sm sm:text-base"
+              className="w-full p-3 border border-gray-300 rounded-xl mb-3 text-sm sm:text-base focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
               placeholder="Edit feedback text..."
             />
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={closeFeedbackEditModal}
-                className="flex-1 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm sm:text-base"
+                className="flex-1 py-2 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300 text-sm sm:text-base transition-all duration-200 transform hover:scale-105"
               >
                 Cancel
               </button>
               <button
                 onClick={handleEditFeedback}
-                className="flex-1 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm sm:text-base"
+                className="flex-1 py-2 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-xl hover:from-purple-600 hover:to-pink-700 text-sm sm:text-base transition-all duration-200 transform hover:scale-105 shadow-lg"
               >
                 Update
               </button>
