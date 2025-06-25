@@ -11,7 +11,7 @@ const app = express();
 
 
 app.use(cors({
-  origin: ['http://localhost:5174','https://feedback-board-git-main-rithdeshs-projects-a2fe6ed7.vercel.app','https://feedback-board-9vt8qgrkx-rithdeshs-projects-a2fe6ed7.vercel.app'],
+  origin: ['http://localhost:5174','https://feedback-board-git-main-rithdeshs-projects-a2fe6ed7.vercel.app','https://feedback-board-9vt8qgrkx-rithdeshs-projects-a2fe6ed7.vercel.app','https://feedback-board-sable.vercel.app'],
   credentials:true
 }));
 app.use(express.json()); 
