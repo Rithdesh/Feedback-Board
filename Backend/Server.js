@@ -12,7 +12,7 @@ const app = express();
 
 app.use(cors({
   origin: ['http://localhost:5174', 'https://feedback-board-sable.vercel.app/','https://feedback-board-n9zh.onrender.com'],
-  credentials: true
+  credentials:true
 }));
 app.use(express.json()); 
 
