@@ -47,7 +47,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex flex-col gap-12 items-center justify-center p-4 overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-orange-400 via-red-400 to-pink-500 flex flex-col gap-12 items-center justify-center p-4 overflow-hidden">
       <h1 className="text-3xl font-bold text-black drop-shadow-md">
         Join us today
       </h1>
