@@ -10,7 +10,10 @@ dotenv.config();
 const app = express();
 
 
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5174', 'https://feedback-board-sable.vercel.app/','https://feedback-board-n9zh.onrender.com'],
+  credentials: true
+}));
 app.use(express.json()); 
 
 // Connect to MongoDB
