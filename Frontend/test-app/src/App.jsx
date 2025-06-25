@@ -1,27 +1,19 @@
 import "./App.css";
-
-import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Login from "./Components/Login";
+import Home from "./Components/Home";
+import Signup from "./Components/Signup";
+import Profile from "./Components/Profile";
 
 function App() {
   return (
-    <div
-      className="min-h-screen bg-gray-100 flex items-center justify
-center"
-    >
-      <div className="p-6 max-w-sm bg-white rounded-lg shadow-lg text-center">
-        <h1 className="text-4xl font-bold text-red-600 mb-4">
-          Hello, Tailwind!
-        </h1>
-        <p className="text-gray-700 mb-4">
-          If you see this page styled, Tailwind CSS is working!
-        </p>
-        <button
-          className="px-4 py-2 bg-indigo-600 text-white rounded-lg 
-hover:bg-indigo-700"
-        >
-          Click Me
-        </button>
-      </div>
+    <div >
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
     </div>
   );
 }
