@@ -201,19 +201,16 @@ const Profile = () => {
         </div>
 
         {loading ? (
-          <div className="text-center py-8">
-            <div className="bg-white backdrop-blur-md border border-white rounded-2xl shadow-2xl p-8 flex items-center justify-center flex-col">
-              <p className="text-black font-bold text-2xl">Loading...</p>
-            </div>
+          <div className="flex h-screen items-center justify-center">
+            <p className="text-3xl text-black font-mono">Loading...</p>
           </div>
         ) : (
           <>
             {activeTab === "posts" && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
                 {userPosts.length === 0 ? (
-                  <div className="col-span-full bg-white backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-6 sm:p-8 text-center">
-                    <div className="text-6xl text-black mb-4">📝</div>
-                    <p className="text-black text-lg">No posts yet.</p>
+                  <div className="flex h-screen items-center justify-center text-black text-3xl font-mono">
+                    No posts yet.
                   </div>
                 ) : (
                   userPosts.map((post) => (
@@ -260,13 +257,9 @@ const Profile = () => {
             {activeTab === "feedbacks" && (
               <div className="space-y-4">
                 {userFeedbacks.length === 0 ? (
-                  <div className="bg-white backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-4 sm:p-6 text-center">
-                    <div className="text-6xl text-gray-400 mb-4">💬</div>
-                    <p className="text-gray-200 text-lg">No feedbacks yet.</p>
-                    <p className="text-gray-300 text-sm mt-2">
-                      Share your thoughts on posts to see them here!
-                    </p>
-                  </div>
+                  <p className="flex h-screen items-center justify-center text-black text-3xl font-mono">
+                    No feedbacks given yet
+                  </p>
                 ) : (
                   userFeedbacks.map((feedback) => (
                     <div
@@ -378,7 +371,6 @@ const Profile = () => {
         </div>
       )}
 
-  
       {feedbackEditModal.open && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white/95 backdrop-blur-md border border-white/30 rounded-2xl shadow-2xl w-full max-w-md mx-4 p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
