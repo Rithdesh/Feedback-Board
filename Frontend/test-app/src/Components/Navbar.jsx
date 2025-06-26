@@ -33,7 +33,7 @@ const Navbar = () => {
         {!isLoggedIn ? (
           <button
             onClick={() => (window.location.href = "/login")}
-            className="px-3 sm:px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:-translate-y-1 shadow-md hover:shadow-lg"
+            className="text-gray-700 hover:text-green-600 font-medium text-sm sm:text-base transition-all duration-300 hover:scale-105 hover:-translate-y-1 px-2 py-1 rounded-lg hover:bg-green-50"
           >
             Login
           </button>

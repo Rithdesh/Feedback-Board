@@ -166,7 +166,6 @@ const Profile = () => {
       <Navbar />
 
       <div className="max-w-6xl mx-auto">
-        {/* Profile Header */}
         <div className="bg-white rounded-lg shadow p-4 sm:p-6 mb-4 sm:mb-6">
           <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
             {user.name || "User"}
@@ -176,7 +175,6 @@ const Profile = () => {
           </p>
         </div>
 
-        {/* Tabs */}
         <div className="bg-white rounded-lg shadow mb-4 sm:mb-6">
           <div className="flex">
             <button
@@ -210,7 +208,6 @@ const Profile = () => {
           </div>
         ) : (
           <>
-            {/* Posts */}
             {activeTab === "posts" && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
                 {userPosts.length === 0 ? (
@@ -260,7 +257,6 @@ const Profile = () => {
               </div>
             )}
 
-            {/* Feedbacks */}
             {activeTab === "feedbacks" && (
               <div className="space-y-4">
                 {userFeedbacks.length === 0 ? (
@@ -335,7 +331,6 @@ const Profile = () => {
         )}
       </div>
 
-      {/* Edit Post Modal */}
       {editModal.open && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white/95 backdrop-blur-md border border-white/30 rounded-2xl shadow-2xl w-full max-w-md mx-4 p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
@@ -383,7 +378,7 @@ const Profile = () => {
         </div>
       )}
 
-      {/* Edit Feedback Modal */}
+  
       {feedbackEditModal.open && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white/95 backdrop-blur-md border border-white/30 rounded-2xl shadow-2xl w-full max-w-md mx-4 p-4 sm:p-6 max-h-[90vh] overflow-y-auto">

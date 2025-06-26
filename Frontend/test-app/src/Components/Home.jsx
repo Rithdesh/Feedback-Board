@@ -147,7 +147,6 @@ const Home = () => {
                 key={post._id}
                 className="bg-white backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-3 sm:p-4 hover:scale-105 transition-all duration-300 group flex flex-col h-auto"
               >
-                {/* Image Section */}
                 <div className="relative overflow-hidden rounded-xl mb-3">
                   <img
                     src={post.image}
@@ -156,12 +155,11 @@ const Home = () => {
                   />
                 </div>
 
-                {/* Caption */}
                 <p className="font-medium text-black mb-2 text-sm sm:text-base break-words">
                   {post.caption}
                 </p>
 
-                {/* Post Meta */}
+                
                 <div className="text-xs sm:text-sm text-black mb-3 flex items-center justify-between">
                   <span className="flex items-center gap-1">
                     <span className="text-blue-400">👤</span>
@@ -177,7 +175,7 @@ const Home = () => {
                   </span>
                 </div>
 
-                {/* Add Feedback Button */}
+
                 <button
                   onClick={() => openModal(post._id)}
                   className="w-full py-2 bg-gradient-to-r from-orange-500 to-red-600 text-white text-sm rounded-lg hover:from-orange-600 hover:to-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg mb-3"
@@ -185,7 +183,6 @@ const Home = () => {
                   💬 Add Feedback
                 </button>
 
-                {/* Feedback Section */}
                 <div className="flex-1 overflow-hidden">
                   <h4 className="text-sm font-medium text-black mb-2 flex items-center gap-1">
                     <span className="text-purple-500">💬</span>
@@ -244,7 +241,6 @@ const Home = () => {
           </div>
         )}
 
-        {/* Create Post Button */}
         {isLoggedIn && (
           <div className="mt-8 flex justify-center">
             <button
@@ -256,7 +252,6 @@ const Home = () => {
           </div>
         )}
 
-        {/* Feedback Modal */}
         {feedbackModal.open && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-white/95 backdrop-blur-md border border-white/30 rounded-2xl shadow-2xl w-full max-w-md mx-4 p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
@@ -306,7 +301,6 @@ const Home = () => {
           </div>
         )}
 
-        {/* Create Post Modal */}
         {createPostModal && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-white/95 backdrop-blur-md border border-white/30 rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
