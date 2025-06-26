@@ -1,4 +1,4 @@
-1. Tech Stack:
+# Tech Stack:
 
     Frontend: React.js, TailwindCSS
 
@@ -16,7 +16,7 @@
 
     Frontend → Netlify
 
-2.  Features:
+#  Features:
 
     User Authentication (Signup / Login / JWT protected routes)
 
@@ -36,7 +36,7 @@
 
     Responsive design with Tailwind CSS 🎨
 
-3. Guide for running the project Locally
+# Guide for running the project Locally
     1. Clone the repository:
         
         git clone https://github.com/Rithdesh/Feedback-Board.git
@@ -63,7 +63,7 @@
             By default, backend runs on:
             http://localhost:8000
 
-4. Deployment Guide
+# Deployment Guide
      
     Backend (Render):
     Push backend code to GitHub
@@ -91,7 +91,7 @@
 
     Set Netlify Environment Variables (like backend API base URL)
 
-5.  Folder Structure:
+#  Folder Structure:
 
         Root
         ├── Backend
